@@ -1,0 +1,33 @@
+---
+box: Google
+items:
+- label: url
+  value: https://google.com
+- label: userName
+  value: pinco.pallo@gmail.com 
+- label: password
+  value: abbracadabbra123
+- label: otpURI
+  value: otpauth://totp/Acme?secret=IRXW4J3UEBKGK3DMEBAW46KPNZSSC
+---
+box: Yahoo
+items:
+- label: url
+  value: https://login.yahoo.com
+- label: userName
+  value: pino.lalavatrice@yahoo.com 
+- label: password
+  value: tu dimmi qello che devo fare ed io lo faccio
+---
+box: Credit Card
+items:
+- label: card holder name
+  value: Pinco Pallo
+- label: card number
+  value: 123456790
+- label: expiry date
+  value: 04/2026
+- label: cvc
+  value: 123
+- label: pin
+  value: 000000
