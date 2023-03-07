@@ -1,9 +1,6 @@
-# locker
+# Locker
 
-> Store secrets on your local file system.
-
-
-## Locker
+Store secrets on your local file system.
 
 A locker is a store on your file system (built on top of the amazing [bbolt](https://github.com/etcd-io/bbolt)).
 
@@ -17,7 +14,7 @@ Secrets are credentials, tokens, secure notes, credit cards, and any info you wa
 - create an unlimited number of secrets
 - organize secrets into boxes
 - secrets are encrypted and decrypted automatically
-  - using the environment variable `LOCKER_SECRET` with your secret phrase
+  - using the environment variable `LOCKER_SECRET` with your master secret phrase
   - encryption will be done using [AES-256-CFB](https://it.wikipedia.org/wiki/Advanced_Encryption_Standard)
 
 ## Box
