@@ -21,8 +21,24 @@ Secrets are credentials, tokens, secure notes, credit cards, and any info you wa
 
 Boxes are used to group and organize your secrets.
 
+```txt
+┬  ┌─┐┌─┐┬┌─┌─┐┬─┐
+│  │ ││  ├┴┐├┤ ├┬┘
+┴─┘└─┘└─┘┴ ┴└─┘┴└─
+Store secrets on your local file system.
 
----
+Usage:
+   locker <command>
+
+Commands:
+   delete   Delete one secret from a box or a whole box.
+   get      Get one or all secrets from a box.
+   help     Show a list of all commands or describe a specific command.
+   import   Import secrets.
+   info     Print build information and list all existing lockers.
+   list     List all boxes or all secrets in a box.
+   put      Put a secret into a box.
+```
 
 # How To Install
 
