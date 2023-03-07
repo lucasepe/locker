@@ -2,7 +2,7 @@
 
 Store secrets on your local file system.
 
-A locker is a store on your file system (built on top of the amazing [bbolt](https://github.com/etcd-io/bbolt)).
+A Locker is a store on your file system (built on top of the amazing [bbolt](https://github.com/etcd-io/bbolt)).
 
 - create as many lockers as you need
 
