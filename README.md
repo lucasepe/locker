@@ -7,6 +7,8 @@
 ┴─┘└─┘└─┘┴ ┴└─┘┴└─
 Store secrets on your local file system.
 
+> specify a master password setting the env var: LOCKER_SECRET
+
 Usage:
    locker <command>
 
