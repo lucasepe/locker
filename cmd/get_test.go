@@ -31,7 +31,7 @@ func TestCmdGetOne(t *testing.T) {
 	got := strings.TrimSpace(out.String())
 	want := "pinco.pallo@gmail.com"
 	if got != want {
-		t.Fatalf("expected:%v, got:%v", want, got)
+		t.Fatalf("expected: %s, got: %s", want, got)
 	}
 }
 

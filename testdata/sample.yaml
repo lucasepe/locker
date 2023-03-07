@@ -1,6 +1,6 @@
 ---
 box: Google
-items:
+secrets:
 - label: url
   value: https://google.com
 - label: userName
@@ -11,7 +11,7 @@ items:
   value: otpauth://totp/Acme?secret=IRXW4J3UEBKGK3DMEBAW46KPNZSSC
 ---
 box: Yahoo
-items:
+secrets:
 - label: url
   value: https://login.yahoo.com
 - label: userName
@@ -20,7 +20,7 @@ items:
   value: tu dimmi qello che devo fare ed io lo faccio
 ---
 box: Credit Card
-items:
+secrets:
 - label: card holder name
   value: Pinco Pallo
 - label: card number

@@ -26,26 +26,26 @@ type cmdPut struct {
 
 func (*cmdPut) Name() string { return "put" }
 func (*cmdPut) Synopsis() string {
-	return "Put an item into a box."
+	return "Put a secret into a box."
 }
 
 func (*cmdPut) Usage() string {
 	return strings.ReplaceAll(`{NAME} put [flags]
   
-   Put the item with label 'user' and value 'my@gmail.com' into the 'Google' box:
+   Put the secret with label 'user' and value 'my@gmail.com' into the 'Google' box:
      {NAME} put -b Google -l user my@gmail.com'
 
    Put the content of the 'doc.txt' file as label 'myDoc' into the box 'Docs':
      cat doc.txt | {NAME} put -b Docs -l myDoc
 
-   Put an item whose content is another command output (using pipes):
+   Put a secret whose content is another command output (using pipes):
      pwgen 14 1 | {NAME} put -b Instagram -l pass`, "{NAME}", app.Name)
 }
 
 func (c *cmdPut) SetFlags(fs *flag.FlagSet) {
 	fs.Var(&c.box, "b", "Box title.")
 	fs.Var(&c.storeRef, "n", "Locker name.")
-	fs.Var(&c.key, "l", "Item label.")
+	fs.Var(&c.key, "l", "Secret label.")
 }
 
 func (c *cmdPut) Execute(fs *flag.FlagSet) error {
@@ -76,7 +76,7 @@ func (c *cmdPut) Execute(fs *flag.FlagSet) error {
 
 	err = bkt.Put(c.key.Bytes(), val)
 	if err == nil {
-		fmt.Fprintf(fs.Output(), "item successfully stored (label:%s, box: %s, locker: %s)\n",
+		fmt.Fprintf(fs.Output(), "secret successfully stored (label:%s, box: %s, locker: %s)\n",
 			c.key.String(), c.box.String(), c.storeRef.Name())
 	}
 

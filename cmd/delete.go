@@ -27,13 +27,13 @@ type cmdDelete struct {
 
 func (*cmdDelete) Name() string { return "delete" }
 func (*cmdDelete) Synopsis() string {
-	return "Delete one item from a box or delete a whole box."
+	return "Delete one secret from a box or a whole box."
 }
 
 func (*cmdDelete) Usage() string {
 	return strings.ReplaceAll(`{NAME} delete [flags]
   
-   Delete the item with label 'user' in the box 'Google':
+   Delete the secret with label 'user' in the box 'Google':
      {NAME} delete -b Google -l user
 
    Delete the box 'Google':
@@ -43,7 +43,7 @@ func (*cmdDelete) Usage() string {
 func (c *cmdDelete) SetFlags(fs *flag.FlagSet) {
 	fs.Var(&c.box, "b", "Box title.")
 	fs.Var(&c.storeRef, "n", "Locker name.")
-	fs.Var(&c.key, "l", "Item label.")
+	fs.Var(&c.key, "l", "Secret label.")
 }
 
 func (c *cmdDelete) Execute(fs *flag.FlagSet) error {
@@ -77,7 +77,7 @@ func (c *cmdDelete) deleteItem(db *bbolt.DB, fs *flag.FlagSet) error {
 
 	err = bkt.Delete(c.key.Bytes())
 	if err == nil {
-		fmt.Fprintf(fs.Output(), "item successfully deleted (label: %s, box: %s)\n",
+		fmt.Fprintf(fs.Output(), "secret successfully deleted (label: %s, box: %s)\n",
 			c.key.String(), c.box.String())
 	}
 

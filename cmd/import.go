@@ -27,7 +27,7 @@ type cmdImport struct {
 
 func (*cmdImport) Name() string { return "import" }
 func (*cmdImport) Synopsis() string {
-	return "Import items."
+	return "Import secrets."
 }
 
 func (*cmdImport) Usage() string {
@@ -72,8 +72,8 @@ func (c *cmdImport) Execute(fs *flag.FlagSet) error {
 			return err
 		}
 
-		items := make([]struct{ Key, Value []byte }, len(d.Items))
-		for i, el := range d.Items {
+		items := make([]struct{ Key, Value []byte }, len(d.Secrets))
+		for i, el := range d.Secrets {
 			val, err := app.Encrypt([]byte(el.Value))
 			if err != nil {
 				return err
@@ -89,7 +89,7 @@ func (c *cmdImport) Execute(fs *flag.FlagSet) error {
 	}
 
 	if count > 0 {
-		fmt.Printf("successfully imported %d documents\n", count)
+		fmt.Fprintf(fs.Output(), "successfully imported %d documents\n", count)
 	}
 
 	return nil
@@ -107,13 +107,13 @@ func (c *cmdImport) complete(fs *flag.FlagSet) error {
 	return nil
 }
 
-// An Item holds a key/value pair.
-type Item struct {
+// An Secret holds a label/value pair.
+type Secret struct {
 	Label string `yaml:"label"`
 	Value string `yaml:"value"`
 }
 
 type Doc struct {
-	Box   string `yaml:"box"`
-	Items []Item `yaml:"items"`
+	Box     string   `yaml:"box"`
+	Secrets []Secret `yaml:"secrets"`
 }

@@ -24,13 +24,13 @@ type cmdList struct {
 
 func (*cmdList) Name() string { return "list" }
 func (*cmdList) Synopsis() string {
-	return "List all boxes or all items in a box."
+	return "List all boxes or all secrets in a box."
 }
 
 func (*cmdList) Usage() string {
 	return strings.ReplaceAll(`{NAME} list [flags]
   
-   List all items in the box 'Google' from the locker 'accounts':
+   List all secrets in the box 'Google' from the locker 'accounts':
      {NAME} list -b Google -n accounts'
 
    List all boxes in the default locker:
@@ -91,5 +91,4 @@ func (c *cmdList) printKeysInBucket(fs *flag.FlagSet) error {
 	term.PrintColumns(fs.Output(), &all, 6)
 
 	return nil
-
 }

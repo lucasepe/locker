@@ -29,7 +29,7 @@ func TestCmdDeleteOne(t *testing.T) {
 	}
 
 	got := strings.TrimSpace(out.String())
-	want := "item successfully deleted"
+	want := "secret successfully deleted"
 	if !strings.HasPrefix(got, want) {
 		t.Fatalf("expected prefix: %v, got: %v", want, got)
 	}

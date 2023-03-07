@@ -30,7 +30,7 @@ func TestCmdAdd(t *testing.T) {
 	}
 
 	got := strings.TrimSpace(out.String())
-	want := "item successfully stored"
+	want := "secret successfully stored"
 	if !strings.HasPrefix(got, want) {
 		t.Fatalf("expected prefix: %v, got: %v", want, got)
 	}

@@ -25,7 +25,7 @@ func TestCmdImport(t *testing.T) {
 	got := strings.TrimSpace(out.String())
 	want := "successfully imported 3 documents"
 	if got != want {
-		t.Fatalf("expected:%v, got:%v", want, got)
+		t.Fatalf("expected: %s, got: %s", want, got)
 	}
 }
 

@@ -27,23 +27,23 @@ type cmdGet struct {
 
 func (*cmdGet) Name() string { return "get" }
 func (*cmdGet) Synopsis() string {
-	return "Get one or all items from a box."
+	return "Get one or all secrets from a box."
 }
 
 func (*cmdGet) Usage() string {
 	return strings.ReplaceAll(`{NAME} get [flags]
   
-   Get the item with label 'user' from the 'Google' box:
+   Get the secret with label 'user' from the 'Google' box:
      {NAME} get -b Google -l user
 
-   Get all the items from the 'Google' box:
+   Get all the secrets from the 'Google' box:
      {NAME} get -b Google`, "{NAME}", app.Name)
 }
 
 func (c *cmdGet) SetFlags(fs *flag.FlagSet) {
 	fs.Var(&c.box, "b", "Box title.")
 	fs.Var(&c.storeRef, "n", "Locker name.")
-	fs.Var(&c.key, "l", "Item label.")
+	fs.Var(&c.key, "l", "Secret label.")
 }
 
 func (c *cmdGet) Execute(fs *flag.FlagSet) error {

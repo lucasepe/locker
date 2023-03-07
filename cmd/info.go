@@ -45,7 +45,7 @@ func (p *cmdInfo) Execute(fs *flag.FlagSet) error {
 		return nil
 	}
 
-	fmt.Fprintf(fs.Output(), "\nExisting stores:\n\n")
+	fmt.Fprintf(fs.Output(), "\nExisting lockers:\n\n")
 
 	for _, v := range archives {
 		fmt.Fprintf(fs.Output(), " - %s\n", v)
