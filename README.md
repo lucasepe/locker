@@ -30,17 +30,16 @@ A Locker is a store on your file system (built on top of the amazing [bbolt](htt
 
 Secrets are credentials, tokens, secure notes, credit cards, and any info you want.
 
-- a secret has a label and a content
-- create an unlimited number of secrets
-- organize secrets into boxes
+- a secret has a key and a value
+- create unlimited number of secrets
+- organize secrets into namespaces
 - secrets are encrypted and decrypted automatically
   - using the environment variable `LOCKER_SECRET` with your master secret phrase
   - encryption will be done using [AES-256-CFB](https://it.wikipedia.org/wiki/Advanced_Encryption_Standard)
 
-## Box
+## Namespaces
 
-Boxes are used to group and organize your secrets.
-
+Namespaces are used to group and organize your secrets.
 
 # How To Install
 
