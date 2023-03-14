@@ -10,15 +10,17 @@ import (
 	"github.com/lucasepe/locker/internal/kv"
 )
 
+const (
+	outputTxt = "txt"
+	outputEnv = "env"
+)
+
 func newCmdGet() *cmdGet {
 	return &cmdGet{
 		namespace: flags.NamespaceFlag{},
 		key:       flags.KeyFlag{},
 		storeRef:  flags.StoreFlag{},
-		output: flags.Enum{Choices: []string{
-			"env",
-			"txt",
-		}},
+		output:    flags.Enum{Choices: []string{outputEnv, outputTxt}},
 	}
 }
 
@@ -48,7 +50,7 @@ func (c *cmdGet) SetFlags(fs *flag.FlagSet) {
 	fs.Var(&c.namespace, "n", "Namespace.")
 	fs.Var(&c.storeRef, "s", "Store name.")
 	fs.Var(&c.key, "k", "Secret key.")
-	fs.Var(&c.output, "o", fmt.Sprintf("Output format: %s", c.output.String()))
+	fs.Var(&c.output, "o", fmt.Sprintf("Output format, one of: %s", strings.Join(c.output.Choices, ",")))
 }
 
 func (c *cmdGet) Execute(fs *flag.FlagSet) error {
@@ -92,7 +94,7 @@ func (c *cmdGet) extractItem(sto kv.Store, fs *flag.FlagSet) error {
 		return err
 	}
 
-	if c.output.Value == "txt" {
+	if c.output.Value == outputTxt {
 		fmt.Fprintf(fs.Output(), "%s", val)
 	} else {
 		fmt.Fprintf(fs.Output(), "%s=%s", strings.ToUpper(c.key.String()), val)
@@ -107,7 +109,7 @@ func (c *cmdGet) complete(fs *flag.FlagSet) error {
 	}
 
 	if c.output.Value == "" {
-		c.output.Set("txt")
+		c.output.Set(outputTxt)
 	}
 
 	return nil
