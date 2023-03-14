@@ -4,17 +4,17 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/lucasepe/locker/cmd/app"
+	"github.com/lucasepe/locker/internal/kv"
+	"github.com/lucasepe/locker/internal/kv/bbolt"
 	"github.com/lucasepe/strcase"
-	"go.etcd.io/bbolt"
 )
 
 type StoreFlag struct {
 	path string
 	name string
-	ref  *bbolt.DB
+	ref  kv.Store
 }
 
 func (f *StoreFlag) String() string {
@@ -32,7 +32,7 @@ func (f *StoreFlag) Set(name string) (err error) {
 	return os.MkdirAll(app.Dir(), os.ModePerm)
 }
 
-func (f *StoreFlag) Connect() (*bbolt.DB, error) {
+func (f *StoreFlag) Connect() (kv.Store, error) {
 	if f.ref != nil {
 		return f.ref, nil
 	}
@@ -44,7 +44,7 @@ func (f *StoreFlag) Connect() (*bbolt.DB, error) {
 		}
 	}
 
-	return bbolt.Open(f.path, 0600, &bbolt.Options{
-		Timeout: 30 * time.Second,
+	return bbolt.NewStore(bbolt.Options{
+		Path: f.path,
 	})
 }

@@ -6,44 +6,43 @@ import (
 
 	"github.com/lucasepe/locker/cmd/app"
 	"github.com/lucasepe/locker/cmd/flags"
-	"github.com/lucasepe/locker/internal/store"
 	"github.com/lucasepe/locker/internal/term"
 )
 
 func newCmdList() *cmdList {
 	return &cmdList{
-		box:      flags.BoxFlag{},
-		storeRef: flags.StoreFlag{},
+		namespace: flags.NamespaceFlag{},
+		storeRef:  flags.StoreFlag{},
 	}
 }
 
 type cmdList struct {
-	box      flags.BoxFlag
-	storeRef flags.StoreFlag
+	namespace flags.NamespaceFlag
+	storeRef  flags.StoreFlag
 }
 
 func (*cmdList) Name() string { return "list" }
 func (*cmdList) Synopsis() string {
-	return "List all boxes or all secrets in a box."
+	return "List all namespaces or all keys in a namespace."
 }
 
 func (*cmdList) Usage() string {
 	return strings.ReplaceAll(`{NAME} list [flags]
   
-   List all secrets in the box 'Google' from the locker 'accounts':
-     {NAME} list -b Google -n accounts'
+   List all keys in the namespace 'google' from the store 'accounts':
+     {NAME} list -n google -s accounts'
 
-   List all boxes in the default locker:
+   List all namespaces in the default store:
    {NAME} list`, "{NAME}", app.Name)
 }
 
 func (c *cmdList) SetFlags(fs *flag.FlagSet) {
-	fs.Var(&c.box, "b", "Box title.")
-	fs.Var(&c.storeRef, "n", "Locker name.")
+	fs.Var(&c.namespace, "n", "Namespace.")
+	fs.Var(&c.storeRef, "s", "Store name.")
 }
 
 func (c *cmdList) Execute(fs *flag.FlagSet) error {
-	if len(c.box.Bytes()) == 0 {
+	if len(c.namespace.Bytes()) == 0 {
 		return c.printBuckets(fs)
 	}
 
@@ -57,7 +56,7 @@ func (c *cmdList) printBuckets(fs *flag.FlagSet) error {
 	}
 	defer db.Close()
 
-	all, err := store.Buckets(db)
+	all, err := db.Namespaces()
 	if err != nil {
 		return err
 	}
@@ -75,12 +74,7 @@ func (c *cmdList) printKeysInBucket(fs *flag.FlagSet) error {
 	}
 	defer db.Close()
 
-	bkt, err := store.NewBucket(db, c.box.Bytes())
-	if err != nil {
-		return err
-	}
-
-	all, err := bkt.Keys()
+	all, err := db.Keys(c.namespace.String())
 	if err != nil {
 		return err
 	}

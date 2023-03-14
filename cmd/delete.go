@@ -7,43 +7,41 @@ import (
 
 	"github.com/lucasepe/locker/cmd/app"
 	"github.com/lucasepe/locker/cmd/flags"
-	"github.com/lucasepe/locker/internal/store"
-	"go.etcd.io/bbolt"
 )
 
 func newCmdDelete() *cmdDelete {
 	return &cmdDelete{
-		box:      flags.BoxFlag{},
-		key:      flags.LabelFlag{},
-		storeRef: flags.StoreFlag{},
+		namespace: flags.NamespaceFlag{},
+		key:       flags.KeyFlag{},
+		storeRef:  flags.StoreFlag{},
 	}
 }
 
 type cmdDelete struct {
-	box      flags.BoxFlag
-	key      flags.LabelFlag
-	storeRef flags.StoreFlag
+	namespace flags.NamespaceFlag
+	key       flags.KeyFlag
+	storeRef  flags.StoreFlag
 }
 
 func (*cmdDelete) Name() string { return "delete" }
 func (*cmdDelete) Synopsis() string {
-	return "Delete one secret from a box or a whole box."
+	return "Delete one or all secrets from a namespace."
 }
 
 func (*cmdDelete) Usage() string {
 	return strings.ReplaceAll(`{NAME} delete [flags]
   
-   Delete the secret with label 'user' in the box 'Google':
-     {NAME} delete -b Google -l user
+   Delete the secret with key 'user' in the namespace 'google':
+     {NAME} delete -n google -k user
 
-   Delete the box 'Google':
-     {NAME} get -b Google`, "{NAME}", app.Name)
+   Delete the 'google' namespace:
+     {NAME} delete -n google`, "{NAME}", app.Name)
 }
 
 func (c *cmdDelete) SetFlags(fs *flag.FlagSet) {
-	fs.Var(&c.box, "b", "Box title.")
-	fs.Var(&c.storeRef, "n", "Locker name.")
-	fs.Var(&c.key, "l", "Secret label.")
+	fs.Var(&c.namespace, "n", "Namespace.")
+	fs.Var(&c.storeRef, "s", "Store name.")
+	fs.Var(&c.key, "k", "Secret key.")
 }
 
 func (c *cmdDelete) Execute(fs *flag.FlagSet) error {
@@ -51,46 +49,31 @@ func (c *cmdDelete) Execute(fs *flag.FlagSet) error {
 		return err
 	}
 
-	db, err := c.storeRef.Connect()
+	sto, err := c.storeRef.Connect()
 	if err != nil {
 		return err
 	}
-	defer db.Close()
+	defer sto.Close()
 
 	if len(c.key.Bytes()) > 0 {
-		return c.deleteItem(db, fs)
+		err := sto.DeleteOne(c.namespace.String(), c.key.String())
+		if err == nil {
+			fmt.Fprintf(fs.Output(), "secret successfully deleted (key: %s, namespace: %s)\n",
+				c.key.String(), c.namespace.String())
+		}
+		return nil
 	}
 
-	err = store.DeleteBucket(db, c.box.Bytes())
-	if err == nil {
-		fmt.Fprintf(fs.Output(), "box successfully deleted (box: %s)\n", c.box.String())
-	}
-
-	return nil
-}
-
-func (c *cmdDelete) deleteItem(db *bbolt.DB, fs *flag.FlagSet) error {
-	bkt, err := store.NewBucket(db, c.box.Bytes())
-	if err != nil {
-		return err
-	}
-
-	err = bkt.Delete(c.key.Bytes())
-	if err == nil {
-		fmt.Fprintf(fs.Output(), "secret successfully deleted (label: %s, box: %s)\n",
-			c.key.String(), c.box.String())
+	if err := sto.DeleteAll(c.namespace.String()); err == nil {
+		fmt.Fprintf(fs.Output(), "namespace '%s' successfully deleted\n", c.namespace.String())
 	}
 
 	return nil
 }
 
 func (c *cmdDelete) complete(fs *flag.FlagSet) error {
-	if len(app.MasterPassword()) == 0 {
-		return app.ErrUnsetMasterPassword
-	}
-
-	if len(c.box.Bytes()) == 0 {
-		return fmt.Errorf("missing: box title")
+	if len(c.namespace.Bytes()) == 0 {
+		return fmt.Errorf("missing namespace")
 	}
 
 	return nil

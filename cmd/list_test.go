@@ -32,7 +32,7 @@ func TestCmdList(t *testing.T) {
 
 	want := []string{
 		"password",
-		"userName",
+		"user_name",
 	}
 
 	got := strings.Fields(strings.TrimSpace(out.String()))
@@ -54,8 +54,8 @@ func runCmdList(output io.Writer) error {
 	op.SetFlags(fs)
 
 	err := fs.Parse([]string{
-		"-b", testBox,
-		"-n", testStore,
+		"-n", testNamespace,
+		"-s", testStore,
 	})
 	if err != nil {
 		return err

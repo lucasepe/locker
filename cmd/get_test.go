@@ -23,7 +23,7 @@ func TestCmdGetOne(t *testing.T) {
 	}
 
 	out.Reset()
-	err = runCmdGet(out, "userName")
+	err = runCmdGet(out, "user_name")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -58,7 +58,7 @@ func TestCmdGetAll(t *testing.T) {
 
 	got := strings.TrimSpace(out.String())
 	want := `password: magick
-userName: pinco.pallo@gmail.com`
+user_name: pinco.pallo@gmail.com`
 	if got != want {
 		t.Fatalf("expected:%v, got:%v", want, got)
 	}
@@ -73,11 +73,11 @@ func runCmdGet(output io.Writer, key string) error {
 	op.SetFlags(fs)
 
 	args := []string{
-		"-b", testBox,
-		"-n", testStore,
+		"-n", testNamespace,
+		"-s", testStore,
 	}
 	if len(key) > 0 {
-		args = append(args, "-l", key)
+		args = append(args, "-k", key)
 	}
 
 	if err := fs.Parse(args); err != nil {

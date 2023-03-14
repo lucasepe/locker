@@ -9,7 +9,8 @@ import (
 
 	"github.com/lucasepe/locker/cmd/app"
 	"github.com/lucasepe/locker/cmd/flags"
-	"github.com/lucasepe/locker/internal/store"
+	"github.com/lucasepe/strcase"
+
 	"gopkg.in/yaml.v3"
 )
 
@@ -35,7 +36,7 @@ func (*cmdImport) Usage() string {
 }
 
 func (c *cmdImport) SetFlags(fs *flag.FlagSet) {
-	fs.Var(&c.storeRef, "n", "Locker name.")
+	fs.Var(&c.storeRef, "s", "Store name.")
 	fs.Var(&c.file, "f", "File to import.")
 }
 
@@ -59,7 +60,7 @@ func (c *cmdImport) Execute(fs *flag.FlagSet) error {
 	count := 0
 	decoder := yaml.NewDecoder(rdr)
 	for {
-		var d Doc
+		var d SecretList
 		if err := decoder.Decode(&d); err != nil {
 			if err == io.EOF {
 				break
@@ -67,24 +68,12 @@ func (c *cmdImport) Execute(fs *flag.FlagSet) error {
 			return fmt.Errorf("document decode failed: %w", err)
 		}
 
-		bkt, err := store.NewBucket(db, []byte(d.Box))
-		if err != nil {
-			return err
-		}
-
-		items := make([]struct{ Key, Value []byte }, len(d.Secrets))
-		for i, el := range d.Secrets {
-			val, err := app.Encrypt([]byte(el.Value))
+		for _, el := range d.Secrets {
+			err := db.PutOne(strcase.Kebab(d.Namespace), strcase.Snake(el.Key), el.Value)
 			if err != nil {
 				return err
 			}
-			items[i].Key = []byte(el.Label)
-			items[i].Value = val
 		}
-		if err := bkt.Insert(items); err != nil {
-			return err
-		}
-
 		count = count + 1
 	}
 
@@ -96,10 +85,6 @@ func (c *cmdImport) Execute(fs *flag.FlagSet) error {
 }
 
 func (c *cmdImport) complete(fs *flag.FlagSet) error {
-	if len(app.MasterPassword()) == 0 {
-		return app.ErrUnsetMasterPassword
-	}
-
 	if len(c.file.String()) == 0 {
 		return fmt.Errorf("file to import not specified")
 	}
@@ -109,11 +94,11 @@ func (c *cmdImport) complete(fs *flag.FlagSet) error {
 
 // An Secret holds a label/value pair.
 type Secret struct {
-	Label string `yaml:"label"`
+	Key   string `yaml:"key"`
 	Value string `yaml:"value"`
 }
 
-type Doc struct {
-	Box     string   `yaml:"box"`
-	Secrets []Secret `yaml:"secrets"`
+type SecretList struct {
+	Namespace string   `yaml:"namespace"`
+	Secrets   []Secret `yaml:"secrets"`
 }

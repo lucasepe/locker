@@ -57,7 +57,7 @@ func TestCmdDeleteAll(t *testing.T) {
 	}
 
 	got := strings.TrimSpace(out.String())
-	want := "box successfully deleted"
+	want := "namespace 'stuffs' successfully deleted"
 	if !strings.HasPrefix(got, want) {
 		t.Fatalf("expected prefix: %v, got: %v", want, got)
 	}
@@ -72,11 +72,11 @@ func runCmdDelete(output io.Writer, key string) error {
 	op.SetFlags(fs)
 
 	args := []string{
-		"-b", testBox,
-		"-n", testStore,
+		"-n", testNamespace,
+		"-s", testStore,
 	}
 	if len(key) > 0 {
-		args = append(args, "-l", key)
+		args = append(args, "-k", key)
 	}
 
 	if err := fs.Parse(args); err != nil {

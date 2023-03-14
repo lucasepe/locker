@@ -1,7 +1,6 @@
 package app
 
 import (
-	"encoding/base64"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -34,15 +33,7 @@ func Encrypt(data []byte) ([]byte, error) {
 		return nil, ErrUnsetMasterPassword
 	}
 
-	src, err := secrets.Encrypt(key, data)
-	if err != nil {
-		return nil, err
-	}
-
-	encoder := base64.StdEncoding
-	buf := make([]byte, encoder.EncodedLen(len(src)))
-	encoder.Encode(buf, src)
-	return buf, nil
+	return secrets.Encrypt(key, data)
 }
 
 func Decrypt(data []byte) ([]byte, error) {
@@ -51,17 +42,6 @@ func Decrypt(data []byte) ([]byte, error) {
 		return nil, ErrUnsetMasterPassword
 	}
 
-	enc := base64.StdEncoding
-	dbuf := make([]byte, enc.DecodedLen(len(data)))
-	n, err := enc.Decode(dbuf, data)
-	if err != nil {
-		return nil, err
-	}
-
-	res, err := secrets.Decrypt(key, dbuf[:n])
-	if err != nil {
-		return nil, fmt.Errorf("%w: double check your master password", err)
-	}
-
-	return res, nil
+	return secrets.Decrypt(key, data)
+	//return nil, fmt.Errorf("%w: double check your master password", err)
 }

@@ -23,7 +23,7 @@ func TestCmdImport(t *testing.T) {
 	}
 
 	got := strings.TrimSpace(out.String())
-	want := "successfully imported 3 documents"
+	want := "successfully imported 2 documents"
 	if got != want {
 		t.Fatalf("expected: %s, got: %s", want, got)
 	}
@@ -38,7 +38,7 @@ func runCmdImport(output io.Writer) error {
 	op.SetFlags(fs)
 
 	args := []string{
-		"-n", testStore,
+		"-s", testStore,
 		"-f", "../testdata/sample.yaml",
 	}
 

@@ -14,9 +14,9 @@ import (
 )
 
 const (
-	testStore  = "test"
-	testBox    = "stuffs"
-	testSecret = "Abbracadabbra"
+	testStore     = "test"
+	testNamespace = "stuffs"
+	testSecret    = "Abbracadabbra"
 )
 
 func TestCmdAdd(t *testing.T) {
@@ -45,9 +45,9 @@ func runCmdPut(output io.Writer, k, v string) error {
 	op.SetFlags(fs)
 
 	err := fs.Parse([]string{
-		"-b", testBox,
-		"-n", testStore,
-		"-l", k,
+		"-n", testNamespace,
+		"-s", testStore,
+		"-k", k,
 		v,
 	})
 	if err != nil {

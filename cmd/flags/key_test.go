@@ -5,8 +5,8 @@ import (
 	"testing"
 )
 
-func TestLabelFlag(t *testing.T) {
-	fv := LabelFlag{}
+func TestKeyFlag(t *testing.T) {
+	fv := KeyFlag{}
 
 	var fs flag.FlagSet
 	fs.Var(&fv, "key", "")
@@ -16,7 +16,7 @@ func TestLabelFlag(t *testing.T) {
 		t.Fail()
 	}
 
-	want := "unMioSegreto"
+	want := "un_mio_segreto"
 	got := fv.String()
 	if got != want {
 		t.Fatalf("expected: %v, got: %v", want, got)
