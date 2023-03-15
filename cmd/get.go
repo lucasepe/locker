@@ -3,6 +3,7 @@ package cmd
 import (
 	"flag"
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/lucasepe/locker/cmd/flags"
@@ -10,31 +11,40 @@ import (
 )
 
 const (
-	outputTxt = "txt"
-	outputEnv = "env"
+	fmtTxt = "txt"
+	fmtEnv = "env"
 )
 
 func newCmdGet() *cmdGet {
 	return &cmdGet{
 		namespace: flags.Namespace{},
-		key:       flags.Key{},
+		keys:      flags.StringList{},
 		storeRef: flags.Store{
 			BaseDir: AppDir(),
 		},
-		output: flags.Enum{Choices: []string{outputEnv, outputTxt}},
+		output: flags.Enum{Choices: []string{fmtEnv, fmtTxt}},
+		exportFuncMap: map[string]exportFunc{
+			fmtEnv: func(w io.Writer, k, v string) {
+				fmt.Fprintf(w, "%s=%s", strings.ToUpper(k), v)
+			},
+			fmtTxt: func(w io.Writer, k, v string) {
+				fmt.Fprintf(w, "%s: %s", k, v)
+			},
+		},
 	}
 }
 
 type cmdGet struct {
-	namespace flags.Namespace
-	key       flags.Key
-	storeRef  flags.Store
-	output    flags.Enum
+	namespace     flags.Namespace
+	keys          flags.StringList
+	storeRef      flags.Store
+	output        flags.Enum
+	exportFuncMap map[string]exportFunc
 }
 
 func (*cmdGet) Name() string { return "get" }
 func (*cmdGet) Synopsis() string {
-	return "Get one or all secrets from a namespace."
+	return "Get one, some or all secrets from a namespace."
 }
 
 func (*cmdGet) Usage() string {
@@ -50,7 +60,7 @@ func (*cmdGet) Usage() string {
 func (c *cmdGet) SetFlags(fs *flag.FlagSet) {
 	fs.Var(&c.namespace, "n", "Namespace.")
 	fs.Var(&c.storeRef, "s", "Store name.")
-	fs.Var(&c.key, "k", "Secret key.")
+	fs.Var(&c.keys, "k", "Secret key.")
 	fs.Var(&c.output, "o", fmt.Sprintf("Output format, one of: %s", strings.Join(c.output.Choices, ",")))
 }
 
@@ -65,40 +75,43 @@ func (c *cmdGet) Execute(fs *flag.FlagSet) error {
 	}
 	defer sto.Close()
 
-	if len(c.key.Bytes()) > 0 {
-		return c.extractItem(sto, fs)
+	keys := c.keys.Values()
+	if len(keys) == 1 {
+		return c.extractOne(sto, fs)
 	}
 
 	return c.extractAll(sto, fs)
 }
 
 func (c *cmdGet) extractAll(sto kv.Store, fs *flag.FlagSet) error {
-	all, err := sto.GetAll(c.namespace.String())
+	all, err := sto.GetAll(c.namespace.String(), c.keys.Values()...)
 	if err != nil {
 		return err
 	}
 
+	of := c.output.String()
+	i := 0
 	for k, v := range all {
-		if c.output.String() == "env" {
-			fmt.Fprintf(fs.Output(), "%s=%s\n", strings.ToUpper(k), v)
-		} else {
-			fmt.Fprintf(fs.Output(), "%s: %s\n", k, v)
+		c.exportFuncMap[of](fs.Output(), k, v)
+		if i < len(all)-1 {
+			fmt.Fprintln(fs.Output())
 		}
 	}
 
 	return nil
 }
 
-func (c *cmdGet) extractItem(sto kv.Store, fs *flag.FlagSet) error {
-	val, err := sto.GetOne(c.namespace.String(), c.key.String())
+func (c *cmdGet) extractOne(sto kv.Store, fs *flag.FlagSet) error {
+	key := c.keys.Values()[0]
+	val, err := sto.GetOne(c.namespace.String(), key)
 	if err != nil {
 		return err
 	}
 
-	if c.output.Value == outputTxt {
+	if c.output.Value == fmtTxt {
 		fmt.Fprintf(fs.Output(), "%s", val)
 	} else {
-		fmt.Fprintf(fs.Output(), "%s=%s", strings.ToUpper(c.key.String()), val)
+		c.exportFuncMap[c.output.Value](fs.Output(), key, val)
 	}
 
 	return nil
@@ -110,7 +123,7 @@ func (c *cmdGet) complete(fs *flag.FlagSet) error {
 	}
 
 	if c.output.Value == "" {
-		c.output.Set(outputTxt)
+		c.output.Set(fmtTxt)
 	}
 
 	pwd, err := getMasterSecret()
@@ -121,3 +134,5 @@ func (c *cmdGet) complete(fs *flag.FlagSet) error {
 
 	return nil
 }
+
+type exportFunc func(w io.Writer, key, val string)

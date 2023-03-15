@@ -23,7 +23,7 @@ type Store interface {
 	// GetOne retrieves the value for the given key in the specified namespace.
 	GetOne(namespace string, key string) (val string, err error)
 	// GetAll retrieves all the values in a given namespace
-	GetAll(namespace string) (map[string]string, error)
+	GetAll(namespace string, keys ...string) (map[string]string, error)
 	// DeleteOne deletes the stored value for the given key in the specified namespace.
 	DeleteOne(namespace string, key string) error
 	// DeleteAll deletes all the values in a namespace.

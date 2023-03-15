@@ -124,7 +124,7 @@ func (s *boltStore) DeleteAll(namespace string) error {
 	})
 }
 
-func (s *boltStore) GetAll(namespace string) (map[string]string, error) {
+func (s *boltStore) GetAll(namespace string, keys ...string) (map[string]string, error) {
 	res := make(map[string]string)
 
 	err := s.db.View(func(tx *bbolt.Tx) error {
@@ -137,6 +137,10 @@ func (s *boltStore) GetAll(namespace string) (map[string]string, error) {
 		for key, val := c.First(); key != nil; key, val = c.Next() {
 			k := make([]byte, len(key))
 			copy(k, key)
+
+			if len(keys) > 0 && !contains(keys, string(k)) {
+				continue
+			}
 
 			var v []byte
 			if s.codec != nil {
@@ -197,4 +201,13 @@ func (s *boltStore) Close() error {
 		return nil
 	}
 	return s.db.Close()
+}
+
+func contains(s []string, e string) bool {
+	for _, v := range s {
+		if v == e {
+			return true
+		}
+	}
+	return false
 }
