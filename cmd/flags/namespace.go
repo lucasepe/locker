@@ -2,19 +2,19 @@ package flags
 
 import "github.com/lucasepe/strcase"
 
-type NamespaceFlag struct {
+type Namespace struct {
 	name []byte
 }
 
-func (f *NamespaceFlag) String() string {
+func (f *Namespace) String() string {
 	return string(f.name)
 }
 
-func (f *NamespaceFlag) Set(v string) (err error) {
+func (f *Namespace) Set(v string) (err error) {
 	f.name = []byte(strcase.Kebab(v))
 	return nil
 }
 
-func (f *NamespaceFlag) Bytes() []byte {
+func (f *Namespace) Bytes() []byte {
 	return f.name
 }

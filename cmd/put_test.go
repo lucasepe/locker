@@ -9,8 +9,6 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
-
-	"github.com/lucasepe/locker/cmd/app"
 )
 
 const (
@@ -22,7 +20,7 @@ const (
 func TestCmdAdd(t *testing.T) {
 	defer os.Remove(testArchivePath())
 
-	os.Setenv(app.EnvSecret, testSecret)
+	os.Setenv(EnvSecret, testSecret)
 
 	out := bytes.NewBufferString("")
 	if err := runCmdPut(out, "user", "Pino Latino"); err != nil {
@@ -58,5 +56,5 @@ func runCmdPut(output io.Writer, k, v string) error {
 }
 
 func testArchivePath() string {
-	return filepath.Join(app.Dir(), fmt.Sprintf("%s.db", testStore))
+	return filepath.Join(AppDir(), fmt.Sprintf("%s.db", testStore))
 }

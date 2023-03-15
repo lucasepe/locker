@@ -19,7 +19,7 @@ func TestCmdInfo(t *testing.T) {
 	}
 
 	got := strings.TrimSpace(out.String())
-	want := "locker 1.0.0 (build: 8888) "
+	want := "Locker 1.0.0 (build: 8888) "
 	if !strings.HasPrefix(got, want) {
 		t.Fatalf("expected prefix: %v, got: %v", want, got)
 	}

@@ -11,30 +11,12 @@ type Options struct {
 	// Optional ("bbolt.db" by default).
 	Path string
 	// Encoding format.
-	// Optional (encoding.JSON by default).
 	Codec kv.Codec
 }
 
-// DefaultOptions is an Options object with default values.
-// Path: "bbolt.db", Codec: encoding.JSON
-var DefaultOptions = Options{
-	Path:  "secrets.db",
-	Codec: kv.NewCryptoCodec(),
-}
-
 // NewStore creates a new bbolt store.
-// Note: bbolt uses an exclusive write lock on the database file so it cannot be shared by multiple processes.
-// So when creating multiple clients you should always use a new database file (by setting a different Path in the options).
-//
 // You must call the Close() method on the store when you're done working with it.
 func NewStore(options Options) (kv.Store, error) {
-	if options.Path == "" {
-		options.Path = DefaultOptions.Path
-	}
-	if options.Codec == nil {
-		options.Codec = kv.NewCryptoCodec()
-	}
-
 	// Open DB
 	db, err := bbolt.Open(options.Path, 0600, nil)
 	if err != nil {
@@ -89,14 +71,25 @@ func (s *boltStore) GetOne(namespace, key string) (value string, err error) {
 
 	err = s.db.View(func(tx *bbolt.Tx) error {
 		bkt := tx.Bucket([]byte(namespace))
-		data := bkt.Get([]byte(key))
-		if data != nil {
-			dst, err := s.codec.Unmarshal(data)
-			if err != nil {
-				return err
-			}
-			value = string(dst)
+		if bkt == nil {
+			return kv.ErrNamespaceNotFound
 		}
+
+		data := bkt.Get([]byte(key))
+		if data == nil {
+			return nil
+		}
+
+		if s.codec == nil {
+			value = string(data)
+			return nil
+		}
+
+		dst, err := s.codec.Unmarshal(data)
+		if err != nil {
+			return err
+		}
+		value = string(dst)
 		return nil
 	})
 
@@ -114,6 +107,9 @@ func (s *boltStore) DeleteOne(namespace, key string) error {
 
 	return s.db.Update(func(tx *bbolt.Tx) error {
 		bkt := tx.Bucket([]byte(namespace))
+		if bkt == nil {
+			return kv.ErrNamespaceNotFound
+		}
 		return bkt.Delete([]byte(key))
 	})
 }
@@ -142,9 +138,16 @@ func (s *boltStore) GetAll(namespace string) (map[string]string, error) {
 			k := make([]byte, len(key))
 			copy(k, key)
 
-			v, err := s.codec.Unmarshal(val)
-			if err != nil {
-				return err
+			var v []byte
+			if s.codec != nil {
+				var err error
+				v, err = s.codec.Unmarshal(val)
+				if err != nil {
+					return err
+				}
+			} else {
+				v = make([]byte, len(val))
+				copy(v, val)
 			}
 
 			res[string(k)] = string(v)
@@ -174,7 +177,7 @@ func (s *boltStore) Keys(namespace string) (items []string, err error) {
 	return items, s.db.View(func(tx *bbolt.Tx) error {
 		bkt := tx.Bucket([]byte(namespace))
 		if bkt == nil {
-			return bbolt.ErrBucketNotFound
+			return kv.ErrNamespaceNotFound
 		}
 
 		c := bkt.Cursor()

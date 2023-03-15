@@ -6,8 +6,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/lucasepe/locker/cmd/app"
 )
 
 func newCmdInfo(ver, bld string) *cmdInfo {
@@ -29,14 +27,14 @@ func (*cmdInfo) Synopsis() string {
 }
 
 func (*cmdInfo) Usage() string {
-	return fmt.Sprintf("%s info", app.Name)
+	return fmt.Sprintf("%s info", appLowerName)
 }
 
 func (c *cmdInfo) SetFlags(fs *flag.FlagSet) {}
 
 func (p *cmdInfo) Execute(fs *flag.FlagSet) error {
 	fmt.Fprintf(fs.Output(),
-		"%s %s (build: %s) <https://github.com/lucasepe/bkt>\n", app.Name, p.appVersion, p.appBuild)
+		"%s %s (build: %s) <https://github.com/lucasepe/locker>\n", appName, p.appVersion, p.appBuild)
 	archives, err := p.listStores()
 	if err != nil {
 		return err
@@ -55,7 +53,7 @@ func (p *cmdInfo) Execute(fs *flag.FlagSet) error {
 }
 
 func (c *cmdInfo) listStores() (map[string]string, error) {
-	dir := app.Dir()
+	dir := AppDir()
 	fp, err := os.Open(dir)
 	if err != nil {
 		return nil, err

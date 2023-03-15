@@ -7,14 +7,12 @@ import (
 	"os"
 	"strings"
 	"testing"
-
-	"github.com/lucasepe/locker/cmd/app"
 )
 
 func TestCmdGetOne(t *testing.T) {
 	defer os.Remove(testArchivePath())
 
-	os.Setenv(app.EnvSecret, testSecret)
+	os.Setenv(EnvSecret, testSecret)
 
 	out := bytes.NewBufferString("")
 	err := runCmdPut(out, "user name", "pinco.pallo@gmail.com")
@@ -38,7 +36,7 @@ func TestCmdGetOne(t *testing.T) {
 func TestCmdGetAll(t *testing.T) {
 	defer os.Remove(testArchivePath())
 
-	os.Setenv(app.EnvSecret, testSecret)
+	os.Setenv(EnvSecret, testSecret)
 
 	out := bytes.NewBufferString("")
 	err := runCmdPut(out, "user name", "pinco.pallo@gmail.com")

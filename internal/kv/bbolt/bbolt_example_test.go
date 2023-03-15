@@ -9,10 +9,9 @@ import (
 )
 
 func ExampleStore_PutOne() {
-	os.Setenv(kv.EnvSecret, "HELLO!")
-
 	opt := Options{
-		Path: tempfile(),
+		Path:  tempfile(),
+		Codec: kv.NewCryptoCodec("HELLO!"),
 	}
 
 	sto, err := NewStore(opt)

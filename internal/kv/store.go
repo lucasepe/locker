@@ -9,10 +9,9 @@ const (
 )
 
 var (
-	ErrEmptyNamespace      = errors.New("namespace cannot be empty")
-	ErrEmptyKey            = errors.New("key cannot be empty")
-	ErrUnsetMasterPassword = errors.New("master password cannot be empty")
-	ErrNamespaceNotFound   = errors.New("namespace not found")
+	ErrEmptyNamespace    = errors.New("namespace cannot be empty")
+	ErrEmptyKey          = errors.New("key cannot be empty")
+	ErrNamespaceNotFound = errors.New("namespace not found")
 )
 
 // Store is an abstraction for different key-value store implementations.

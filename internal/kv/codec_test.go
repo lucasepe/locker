@@ -2,15 +2,10 @@ package kv
 
 import (
 	"fmt"
-	"os"
-
-	"github.com/lucasepe/locker/cmd/app"
 )
 
 func ExampleCodec_Marshal() {
-	os.Setenv(app.EnvSecret, "MAGIK")
-
-	codec := NewCryptoCodec()
+	codec := NewCryptoCodec("MAGIK")
 	enc, err := codec.Marshal([]byte("Hello World!"))
 	if err != nil {
 		panic(err)

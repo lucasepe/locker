@@ -7,7 +7,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/lucasepe/locker/cmd/app"
 	"github.com/lucasepe/locker/cmd/flags"
 	"github.com/lucasepe/strcase"
 
@@ -16,14 +15,16 @@ import (
 
 func newCmdImport() *cmdImport {
 	return &cmdImport{
-		file:     flags.FileFlag{},
-		storeRef: flags.StoreFlag{},
+		file: flags.FileFlag{},
+		storeRef: flags.Store{
+			BaseDir: AppDir(),
+		},
 	}
 }
 
 type cmdImport struct {
 	file     flags.FileFlag
-	storeRef flags.StoreFlag
+	storeRef flags.Store
 }
 
 func (*cmdImport) Name() string { return "import" }
@@ -32,7 +33,7 @@ func (*cmdImport) Synopsis() string {
 }
 
 func (*cmdImport) Usage() string {
-	return strings.ReplaceAll("{NAME} import [flags]", "{NAME}", app.Name)
+	return strings.ReplaceAll("{NAME} import [flags]", "{NAME}", appLowerName)
 }
 
 func (c *cmdImport) SetFlags(fs *flag.FlagSet) {
@@ -88,6 +89,12 @@ func (c *cmdImport) complete(fs *flag.FlagSet) error {
 	if len(c.file.String()) == 0 {
 		return fmt.Errorf("file to import not specified")
 	}
+
+	pwd, err := getMasterSecret()
+	if err != nil {
+		return err
+	}
+	c.storeRef.MasterSecret = pwd
 
 	return nil
 }

@@ -6,7 +6,7 @@ import (
 )
 
 func TestKeyFlag(t *testing.T) {
-	fv := KeyFlag{}
+	fv := Key{}
 
 	var fs flag.FlagSet
 	fs.Var(&fv, "key", "")

@@ -4,21 +4,22 @@ import (
 	"flag"
 	"strings"
 
-	"github.com/lucasepe/locker/cmd/app"
 	"github.com/lucasepe/locker/cmd/flags"
 	"github.com/lucasepe/locker/internal/term"
 )
 
 func newCmdList() *cmdList {
 	return &cmdList{
-		namespace: flags.NamespaceFlag{},
-		storeRef:  flags.StoreFlag{},
+		namespace: flags.Namespace{},
+		storeRef: flags.Store{
+			BaseDir: AppDir(),
+		},
 	}
 }
 
 type cmdList struct {
-	namespace flags.NamespaceFlag
-	storeRef  flags.StoreFlag
+	namespace flags.Namespace
+	storeRef  flags.Store
 }
 
 func (*cmdList) Name() string { return "list" }
@@ -33,7 +34,7 @@ func (*cmdList) Usage() string {
      {NAME} list -n google -s accounts'
 
    List all namespaces in the default store:
-   {NAME} list`, "{NAME}", app.Name)
+   {NAME} list`, "{NAME}", appLowerName)
 }
 
 func (c *cmdList) SetFlags(fs *flag.FlagSet) {

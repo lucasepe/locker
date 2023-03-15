@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/lucasepe/locker/cmd/app"
 	"github.com/lucasepe/locker/cmd/flags"
 	"github.com/lucasepe/locker/internal/kv"
 )
@@ -17,17 +16,19 @@ const (
 
 func newCmdGet() *cmdGet {
 	return &cmdGet{
-		namespace: flags.NamespaceFlag{},
-		key:       flags.KeyFlag{},
-		storeRef:  flags.StoreFlag{},
-		output:    flags.Enum{Choices: []string{outputEnv, outputTxt}},
+		namespace: flags.Namespace{},
+		key:       flags.Key{},
+		storeRef: flags.Store{
+			BaseDir: AppDir(),
+		},
+		output: flags.Enum{Choices: []string{outputEnv, outputTxt}},
 	}
 }
 
 type cmdGet struct {
-	namespace flags.NamespaceFlag
-	key       flags.KeyFlag
-	storeRef  flags.StoreFlag
+	namespace flags.Namespace
+	key       flags.Key
+	storeRef  flags.Store
 	output    flags.Enum
 }
 
@@ -43,7 +44,7 @@ func (*cmdGet) Usage() string {
      {NAME} get -n Google -k user
 
    Get all secrets from the 'google' namespace:
-     {NAME} get -n google`, "{NAME}", app.Name)
+     {NAME} get -n google`, "{NAME}", appLowerName)
 }
 
 func (c *cmdGet) SetFlags(fs *flag.FlagSet) {
@@ -111,6 +112,12 @@ func (c *cmdGet) complete(fs *flag.FlagSet) error {
 	if c.output.Value == "" {
 		c.output.Set(outputTxt)
 	}
+
+	pwd, err := getMasterSecret()
+	if err != nil {
+		return err
+	}
+	c.storeRef.MasterSecret = pwd
 
 	return nil
 }

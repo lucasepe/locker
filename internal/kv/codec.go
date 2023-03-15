@@ -2,7 +2,7 @@ package kv
 
 import (
 	"encoding/base64"
-	"os"
+	"errors"
 
 	"github.com/lucasepe/locker/internal/secrets"
 )
@@ -15,21 +15,28 @@ type Codec interface {
 	Unmarshal(data []byte) ([]byte, error)
 }
 
-func NewCryptoCodec() Codec {
-	return &cryptoCodec{}
+var (
+	ErrUnsetMasterPassword = errors.New("master password cannot be empty")
+)
+
+func NewCryptoCodec(masterSecret string) Codec {
+	return &cryptoCodec{
+		token: []byte(masterSecret),
+	}
 }
 
 var _ Codec = (*cryptoCodec)(nil)
 
-type cryptoCodec struct{}
+type cryptoCodec struct {
+	token []byte
+}
 
 func (cc *cryptoCodec) Marshal(src []byte) ([]byte, error) {
-	token := os.Getenv(EnvSecret)
-	if len(token) == 0 {
+	if len(cc.token) == 0 {
 		return nil, ErrUnsetMasterPassword
 	}
 
-	dat, err := secrets.Encrypt([]byte(token), src)
+	dat, err := secrets.Encrypt(cc.token, src)
 	if err != nil {
 		return nil, err
 	}
@@ -42,8 +49,7 @@ func (cc *cryptoCodec) Marshal(src []byte) ([]byte, error) {
 }
 
 func (cc *cryptoCodec) Unmarshal(data []byte) ([]byte, error) {
-	token := os.Getenv(EnvSecret)
-	if len(token) == 0 {
+	if len(cc.token) == 0 {
 		return nil, ErrUnsetMasterPassword
 	}
 
@@ -54,5 +60,5 @@ func (cc *cryptoCodec) Unmarshal(data []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	return secrets.Decrypt([]byte(token), dbuf[:n])
+	return secrets.Decrypt(cc.token, dbuf[:n])
 }

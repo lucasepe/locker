@@ -9,13 +9,12 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/lucasepe/locker/cmd/app"
 )
 
 func TestCmdList(t *testing.T) {
 	defer os.Remove(testArchivePath())
 
-	os.Setenv(app.EnvSecret, testSecret)
+	os.Setenv(EnvSecret, testSecret)
 
 	out := bytes.NewBufferString("")
 	if err := runCmdPut(out, "user name", "Pino Latino"); err != nil {

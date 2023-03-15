@@ -3,24 +3,26 @@ package cmd
 import (
 	"flag"
 	"fmt"
+	"path/filepath"
 	"strings"
 
-	"github.com/lucasepe/locker/cmd/app"
 	"github.com/lucasepe/locker/cmd/flags"
 )
 
 func newCmdPut() *cmdPut {
 	return &cmdPut{
-		namespace: flags.NamespaceFlag{},
-		key:       flags.KeyFlag{},
-		storeRef:  flags.StoreFlag{},
+		namespace: flags.Namespace{},
+		key:       flags.Key{},
+		storeRef: flags.Store{
+			BaseDir: AppDir(),
+		},
 	}
 }
 
 type cmdPut struct {
-	namespace flags.NamespaceFlag
-	key       flags.KeyFlag
-	storeRef  flags.StoreFlag
+	namespace flags.Namespace
+	key       flags.Key
+	storeRef  flags.Store
 }
 
 func (*cmdPut) Name() string { return "put" }
@@ -38,7 +40,7 @@ func (*cmdPut) Usage() string {
      cat doc.txt | {NAME} put -n docs -k my_doc
 
    Put a secret whose content is another command output (using pipes):
-     pwgen 14 1 | {NAME} put -n Instagram -k password`, "{NAME}", app.Name)
+     pwgen 14 1 | {NAME} put -n Instagram -k password`, "{NAME}", appLowerName)
 }
 
 func (c *cmdPut) SetFlags(fs *flag.FlagSet) {
@@ -65,8 +67,9 @@ func (c *cmdPut) Execute(fs *flag.FlagSet) error {
 
 	err = sto.PutOne(c.namespace.String(), c.key.String(), string(val))
 	if err == nil {
+
 		fmt.Fprintf(fs.Output(), "secret successfully stored (key:%s, namespace: %s, store: %s)\n",
-			c.key.String(), c.namespace.String(), c.storeRef.Name())
+			c.key.String(), c.namespace.String(), filepath.Base(c.storeRef.String()))
 	}
 
 	return err
@@ -80,6 +83,12 @@ func (c *cmdPut) complete(fs *flag.FlagSet) error {
 	if len(c.key.Bytes()) == 0 {
 		return fmt.Errorf("missing key")
 	}
+
+	pwd, err := getMasterSecret()
+	if err != nil {
+		return err
+	}
+	c.storeRef.MasterSecret = pwd
 
 	return nil
 }

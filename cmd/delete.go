@@ -5,22 +5,23 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/lucasepe/locker/cmd/app"
 	"github.com/lucasepe/locker/cmd/flags"
 )
 
 func newCmdDelete() *cmdDelete {
 	return &cmdDelete{
-		namespace: flags.NamespaceFlag{},
-		key:       flags.KeyFlag{},
-		storeRef:  flags.StoreFlag{},
+		namespace: flags.Namespace{},
+		key:       flags.Key{},
+		storeRef: flags.Store{
+			BaseDir: AppDir(),
+		},
 	}
 }
 
 type cmdDelete struct {
-	namespace flags.NamespaceFlag
-	key       flags.KeyFlag
-	storeRef  flags.StoreFlag
+	namespace flags.Namespace
+	key       flags.Key
+	storeRef  flags.Store
 }
 
 func (*cmdDelete) Name() string { return "delete" }
@@ -35,7 +36,7 @@ func (*cmdDelete) Usage() string {
      {NAME} delete -n google -k user
 
    Delete the 'google' namespace:
-     {NAME} delete -n google`, "{NAME}", app.Name)
+     {NAME} delete -n google`, "{NAME}", appLowerName)
 }
 
 func (c *cmdDelete) SetFlags(fs *flag.FlagSet) {

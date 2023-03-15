@@ -34,3 +34,7 @@
 # Goreleaser builds
 dist/**
 
+# Dot env files
+*.env
+**/*.env
+ 

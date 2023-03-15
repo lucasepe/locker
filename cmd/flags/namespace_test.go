@@ -6,7 +6,7 @@ import (
 )
 
 func TestNamespaceFlag(t *testing.T) {
-	fv := NamespaceFlag{}
+	fv := Namespace{}
 
 	var fs flag.FlagSet
 	fs.Var(&fv, "namespace", "")

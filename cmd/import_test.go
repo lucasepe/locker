@@ -7,14 +7,12 @@ import (
 	"os"
 	"strings"
 	"testing"
-
-	"github.com/lucasepe/locker/cmd/app"
 )
 
 func TestCmdImport(t *testing.T) {
 	defer os.Remove(testArchivePath())
 
-	os.Setenv(app.EnvSecret, testSecret)
+	os.Setenv(EnvSecret, testSecret)
 
 	out := bytes.NewBufferString("")
 	err := runCmdImport(out)
