@@ -20,6 +20,7 @@ Commands:
    info     Print build information and list all existing lockers.
    list     List all namespaces or all keys in a namespace.
    put      Put a secret into a namespace.
+   totp     Generate a time-based OTP from a 'totp' key into a namespace.
 ```
 
 A Locker is a store on your file system (built on top of the amazing [bbolt](https://github.com/etcd-io/bbolt)).
