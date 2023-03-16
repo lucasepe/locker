@@ -29,7 +29,7 @@ nfpms:
   -
     package_name: locker
     vendor: Luca Sepe
-    homepage: https://github.com/lucasepe/memo
+    homepage: https://github.com/lucasepe/locker
     description: Store secrets on your local file system.
     license: MIT
     maintainer: Luca Sepe
@@ -38,7 +38,7 @@ nfpms:
       - rpm
 
 brews:
-  - homepage: 'https://github.com/lucasepe/memo'
+  - homepage: 'https://github.com/lucasepe/locker'
     description: 'Store secrets on your local file system.'
     folder: Formula
     commit_author:
