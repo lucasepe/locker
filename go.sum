@@ -5,6 +5,8 @@ github.com/lucasepe/strcase v0.1.0 h1:uGKgD/bXvtSRILJG7sHlzP6ZJ/7ol6+4ww0eTWK/pe
 github.com/lucasepe/strcase v0.1.0/go.mod h1:F7MZEK6ffby379eIXJm0Yv339J/iMFA+Z//XlYCIvH0=
 github.com/lucasepe/subcommands v0.1.1 h1:jziqXrZF3oq8ioY3nkLHjCySC451Rx5CTzMcgOIOadw=
 github.com/lucasepe/subcommands v0.1.1/go.mod h1:IvpTnXngMpSJM6H48hLg2QPZWtMfJCZ0hbYoHPfsAa8=
+github.com/lucasepe/totp v0.1.0 h1:zy5s9x93f24oQUvvAetFcXW6gMYQxtUScYlNEIyWw+I=
+github.com/lucasepe/totp v0.1.0/go.mod h1:Vw7gdQtcH3aZcv30DHZAbnS/xpcDPin4mP4qqEarfJ0=
 github.com/lucasepe/xdg v0.1.0 h1:ZycjGq20CtCBSOjVF9XQBcNk47MQ6PyHKdn8DorZsGU=
 github.com/lucasepe/xdg v0.1.0/go.mod h1:XruOfGqUIWjoPJHJA0FGIxpe6c+ETsJyEy79jf4WBR0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=

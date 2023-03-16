@@ -41,6 +41,22 @@ Secrets are credentials, tokens, secure notes, credit cards, and any info you wa
 
 Namespaces are used to group and organize your secrets.
 
+## TOTP
+
+Locker can generate [Time Based OTP](https://en.wikipedia.org/wiki/Time-based_one-time_password) codes parsing [TOTP urls](https://github.com/google/google-authenticator/wiki/Key-Uri-Format) stored under a special key named `totp`.
+
+If you store a [TOTP url](https://github.com/google/google-authenticator/wiki/Key-Uri-Format) like this:
+
+```sh
+locker put -n acme -k totp "otpauth://totp/Acme?secret=IRXW4J3UEBKGK3DMEBAW46KPNZSSC"
+```
+
+then whenever you need you can generate the totp code using this command:
+
+```sh
+locker totp -n acme
+```
+
 # How To Install
 
 ## MacOs

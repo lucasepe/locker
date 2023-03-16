@@ -50,6 +50,7 @@ func Run(ver, bld string) error {
 	cli.Register(newCmdInfo(ver, bld), "")
 	cli.Register(newCmdDelete(), "")
 	cli.Register(newCmdImport(), "")
+	cli.Register(newCmdTotp(), "")
 
 	flag.Parse()
 
