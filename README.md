@@ -13,13 +13,13 @@ Usage:
    locker <command>
 
 Commands:
-   delete   Delete one secret from a box or a whole box.
-   get      Get one or all secrets from a box.
+   delete   Delete one or all secrets from a namespace.
+   get      Get one, some or all secrets from a namespace.
    help     Show a list of all commands or describe a specific command.
    import   Import secrets.
    info     Print build information and list all existing lockers.
-   list     List all boxes or all secrets in a box.
-   put      Put a secret into a box.
+   list     List all namespaces or all keys in a namespace.
+   put      Put a secret into a namespace.
 ```
 
 A Locker is a store on your file system (built on top of the amazing [bbolt](https://github.com/etcd-io/bbolt)).
