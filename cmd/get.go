@@ -110,12 +110,13 @@ func (c *cmdGet) extractOne(sto kv.Store, fs *flag.FlagSet) error {
 	}
 
 	if c.output.Value == fmtTxt {
-		fmt.Fprintf(fs.Output(), "%s", val)
-	} else {
-		c.exportFuncMap[c.output.Value](fs.Output(), key, val)
+		if ok := clipboard.Write([]byte(val)); ok {
+			fmt.Fprintf(fs.Output(), "the secret has been copied to the clipboard")
+		}
+		return nil
 	}
 
-	clipboard.Write([]byte(val))
+	c.exportFuncMap[c.output.Value](fs.Output(), key, val)
 
 	return nil
 }

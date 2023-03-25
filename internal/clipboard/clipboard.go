@@ -75,7 +75,7 @@ func Read() []byte {
 // Write returned a receive-only channel can receive an empty struct
 // as a signal, which indicates the clipboard has been overwritten from
 // this write.
-func Write(buf []byte) <-chan struct{} {
+func Write(buf []byte) bool {
 	lock.Lock()
 	defer lock.Unlock()
 
@@ -84,7 +84,7 @@ func Write(buf []byte) <-chan struct{} {
 		if debug {
 			fmt.Fprintf(os.Stderr, "write to clipboard err: %v\n", err)
 		}
-		return nil
+		return false
 	}
 	return changed
 }

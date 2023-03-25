@@ -135,7 +135,7 @@ func read() (buf []byte, err error) {
 
 // write writes the given data to clipboard and
 // returns true if success or false if failed.
-func write(buf []byte) (<-chan struct{}, error) {
+func write(buf []byte) (bool, error) {
 	errch := make(chan error)
 	changed := make(chan struct{}, 1)
 	go func() {
@@ -177,9 +177,10 @@ func write(buf []byte) (<-chan struct{}, error) {
 	}()
 	err := <-errch
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	return changed, nil
+	_, ok := <-changed
+	return ok, nil
 }
 
 func watch(ctx context.Context) <-chan []byte {

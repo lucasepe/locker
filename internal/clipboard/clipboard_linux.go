@@ -9,8 +9,8 @@ func read() (buf []byte, err error) {
 	return nil, errNotImplemented
 }
 
-func write() (<-chan struct{}, error) {
-	return nil, errNotImplemented
+func write() (bool, error) {
+	return false, errNotImplemented
 }
 
 func watch(ctx context.Context) <-chan []byte {

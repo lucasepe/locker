@@ -40,7 +40,7 @@ func read() (buf []byte, err error) {
 
 // write writes the given data to clipboard and
 // returns true if success or false if failed.
-func write(buf []byte) (<-chan struct{}, error) {
+func write(buf []byte) (bool, error) {
 	var ok C.int
 
 	if len(buf) == 0 {
@@ -50,25 +50,10 @@ func write(buf []byte) (<-chan struct{}, error) {
 			C.NSInteger(len(buf)))
 	}
 	if ok != 0 {
-		return nil, errUnavailable
+		return false, errUnavailable
 	}
 
-	// use unbuffered data to prevent goroutine leak
-	changed := make(chan struct{}, 1)
-	cnt := C.long(C.clipboard_change_count())
-	go func() {
-		for {
-			// not sure if we are too slow or the user too fast :)
-			time.Sleep(time.Second)
-			cur := C.long(C.clipboard_change_count())
-			if cnt != cur {
-				changed <- struct{}{}
-				close(changed)
-				return
-			}
-		}
-	}()
-	return changed, nil
+	return true, nil
 }
 
 func watch(ctx context.Context) <-chan []byte {
