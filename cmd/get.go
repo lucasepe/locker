@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"runtime"
 	"strings"
 
 	"github.com/lucasepe/locker/cmd/flags"
@@ -109,14 +110,23 @@ func (c *cmdGet) extractOne(sto kv.Store, fs *flag.FlagSet) error {
 		return err
 	}
 
-	if c.output.Value == fmtTxt {
-		if ok := clipboard.Write([]byte(val)); ok {
-			fmt.Fprintf(fs.Output(), "the secret has been copied to the clipboard")
-		}
+	if c.output.Value != fmtTxt {
+		c.exportFuncMap[c.output.Value](fs.Output(), key, val)
 		return nil
 	}
 
-	c.exportFuncMap[c.output.Value](fs.Output(), key, val)
+	if runtime.GOOS != "darwin" {
+		fmt.Fprint(fs.Output(), val)
+		return nil
+	}
+
+	if err := clipboard.Write(val); err == nil {
+		fmt.Fprintf(fs.Output(),
+			"secret has been copied to the clipboard (namespace: %s, key: %s)\n",
+			c.namespace.String(), key)
+	} else {
+		fmt.Fprint(fs.Output(), val)
+	}
 
 	return nil
 }

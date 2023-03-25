@@ -6,7 +6,7 @@ before:
     - go mod download
 builds:
 - env:
-    - CGO_ENABLED=1
+    - CGO_ENABLED=0
   ldflags:
     - -s -w -X "main.Version={{.Version}}" -X "main.Build={{.ShortCommit}}"
     - -a -extldflags "-static"
