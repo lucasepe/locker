@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/lucasepe/locker/cmd/flags"
+	"github.com/lucasepe/locker/internal/clipboard"
 	"github.com/lucasepe/locker/internal/kv"
 )
 
@@ -113,6 +114,8 @@ func (c *cmdGet) extractOne(sto kv.Store, fs *flag.FlagSet) error {
 	} else {
 		c.exportFuncMap[c.output.Value](fs.Output(), key, val)
 	}
+
+	clipboard.Write([]byte(val))
 
 	return nil
 }
