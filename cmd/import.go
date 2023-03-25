@@ -72,7 +72,7 @@ func (c *cmdImport) Execute(fs *flag.FlagSet) error {
 		for _, el := range d.Secrets {
 			err := db.PutOne(strcase.Kebab(d.Namespace), strcase.Snake(el.Key), el.Value)
 			if err != nil {
-				return err
+				return fmt.Errorf("namespace: %s: %w", d.Namespace, err)
 			}
 		}
 		count = count + 1
