@@ -13,14 +13,8 @@ package clipboard
 // https://learn.microsoft.com/en-us/windows/win32/dataxchg/using-the-clipboard
 
 import (
-	"bytes"
 	"context"
-	"encoding/binary"
-	"errors"
 	"fmt"
-	"image"
-	"image/color"
-	"image/png"
 	"reflect"
 	"runtime"
 	"syscall"
@@ -123,14 +117,7 @@ func read() (buf []byte, err error) {
 	}
 	defer closeClipboard.Call()
 
-	switch format {
-	case cFmtDIBV5:
-		return nil, errUnsupported
-	case cFmtUnicodeText:
-		fallthrough
-	default:
-		return readText()
-	}
+	return readText()
 }
 
 // write writes the given data to clipboard and
@@ -199,7 +186,7 @@ func watch(ctx context.Context) <-chan []byte {
 			case <-ti.C:
 				cur, _, _ := getClipboardSequenceNumber.Call()
 				if cnt != cur {
-					b := Read(t)
+					b := Read()
 					if b == nil {
 						continue
 					}
