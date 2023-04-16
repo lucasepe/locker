@@ -6,12 +6,14 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/user"
 	"path/filepath"
 	"strings"
 
 	"github.com/lucasepe/locker/internal/text"
 	"github.com/lucasepe/subcommands"
 	"github.com/lucasepe/xdg"
+	"github.com/zalando/go-keyring"
 )
 
 const (
@@ -95,10 +97,20 @@ func grabContent(fs *flag.FlagSet) []byte {
 }
 
 func getMasterSecret() (string, error) {
-	mp := os.Getenv(EnvSecret)
-	if len(mp) == 0 {
-		return "", ErrUnsetMasterSecret
+	secret := os.Getenv(EnvSecret)
+	if len(secret) != 0 {
+		return secret, nil
 	}
 
-	return mp, nil
+	user, err := user.Current()
+	if err != nil {
+		return "", err
+	}
+
+	secret, err = keyring.Get(EnvSecret, user.Username)
+	if err == nil {
+		return secret, nil
+	}
+
+	return "", ErrUnsetMasterSecret
 }

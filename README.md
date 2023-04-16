@@ -38,6 +38,11 @@ Secrets are credentials, tokens, secure notes, credit cards, and any info you wa
   - using the environment variable `LOCKER_SECRET` with your master secret phrase
   - encryption will be done using [AES-256-CFB](https://it.wikipedia.org/wiki/Advanced_Encryption_Standard)
 
+**Note**
+
+Locker can read your master secret phrase `LOCKER_SECRET` from the system keyring thanks to the [go keyring library](https://github.com/zalando/go-keyring).
+
+
 ## Namespaces
 
 Namespaces are used to group and organize your secrets.
