@@ -38,10 +38,18 @@ Secrets are credentials, tokens, secure notes, credit cards, and any info you wa
   - using the environment variable `LOCKER_SECRET` with your master secret phrase
   - encryption will be done using [AES-256-CFB](https://it.wikipedia.org/wiki/Advanced_Encryption_Standard)
 
-**Note**
+### Using Keyring for master secret
 
 Locker can read your master secret phrase `LOCKER_SECRET` from the system keyring thanks to the [go keyring library](https://github.com/zalando/go-keyring).
 
+#### On macOs
+
+1. Open the Keychain Access app  on your Mac.
+
+2. Create the password `LOCKER_SECRET` in the Keychain, save it. 
+3. Double-click the `LOCKER_SECRET` password in the Keychain window under the Kind column, then click Access Control.
+4. To give `locker` commandline tool access to this password: click the "Add" button, then navigate to the _/path/where/you/saved/locker/binary_ and click "Save Changes"
+  - if you installed `locker` using brew, the binary will be located at _/opt/homebrew/Cellar/locker/x.y.z./bin/_ (where x.y.z. is the release version).
 
 ## Namespaces
 
